@@ -231,5 +231,11 @@
     from tbl_user
     where login_act=#{loginact} and login_pwd=#{loginpwd}
   </select>
+
+  <select id="selectAllUsers" parameterType="map" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>
+    from tbl_user
+    where lock_state='1'
+  </select>
   
 </mapper>

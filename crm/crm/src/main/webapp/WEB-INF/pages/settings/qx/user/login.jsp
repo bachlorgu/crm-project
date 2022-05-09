@@ -1,4 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <%
 	String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath()+"/";
@@ -13,6 +15,15 @@
 <script type="text/javascript">
 	$(function ()
 	{
+
+		$(window).keydown(function (event)
+		{
+			if(event.keyCode==13)
+			{
+				$("#login").click()
+			}
+		})
+
 		$("#login").click(function ()
 		{
 			var loginact=$.trim($("#loginact").val())
@@ -39,7 +50,6 @@
 				dataType:'json',
 				success:function (data)
 				{
-					alert(data.message)
 					if(data.code=="1")
 					{
 						//跳转到业务页面
@@ -69,14 +79,21 @@
 			<form action="workbench/index.html" class="form-horizontal" role="form">
 				<div class="form-group form-group-lg">
 					<div style="width: 350px;">
-						<input class="form-control" id="loginact" type="text" placeholder="用户名">
+						<input class="form-control" id="loginact" type="text" value="${cookie.username.value}" placeholder="用户名">
 					</div>
 					<div style="width: 350px; position: relative;top: 20px;">
-						<input class="form-control" id="loginpwd" type="password" placeholder="密码">
+						<input class="form-control" id="loginpwd" type="password" value="${cookie.password.value}" placeholder="密码">
 					</div>
-					<div class="checkbox"  id="isrem" style="position: relative;top: 30px; left: 10px;">
+					<div class="checkbox"  style="position: relative;top: 30px; left: 10px;">
 						<label>
-							<input type="checkbox"> 十天内免登录
+							<%--存在账号密码cookie就默认选择复选框，如果不存在那么默认不选中--%>
+							<c:if test="${not empty cookie.loginAct and not empty cookie.loginPwd}">
+								<input id="isrem" type="checkbox" checked>
+							</c:if>
+							<c:if test="${empty cookie.loginAct and empty cookie.loginPwd}">
+								<input id="isrem" type="checkbox">
+							</c:if>
+							十天免登录
 						</label>
 						&nbsp;&nbsp;
 						<span id="msg"></span>

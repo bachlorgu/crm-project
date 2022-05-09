@@ -10,10 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.text.SimpleDateFormat;
+import javax.servlet.http.*;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +22,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping("/toLogin")
+    @RequestMapping("/tologin")
     public String toLogin()
     {
         return "settings/qx/user/login";
@@ -33,7 +30,7 @@ public class UserController {
 
     @RequestMapping("/dologin")
     @ResponseBody
-    public Object dologin(String loginAct, String loginPwd, String isRemPwd, HttpServletRequest request, HttpSession session)
+    public Object dologin(String loginAct, String loginPwd, String isRemPwd, HttpServletRequest request, HttpServletResponse response, HttpSession session)
     {
         //System.out.println("----------------------");
         Map<String,Object> map=new HashMap<>();
@@ -71,9 +68,39 @@ public class UserController {
                 returnObject.setCode(Contant.RETURN_OBJECT_CODE_SUCCESS);
                 returnObject.setMessage("成功");
                 session.setAttribute(Contant.SESSION_USER,user);
+                if("true".equals(isRemPwd))
+                {
+                    Cookie c1=new Cookie("username",user.getLoginact());
+                    c1.setMaxAge((60*60*24*10));
+                    response.addCookie(c1);
+                    Cookie c2=new Cookie("password",user.getLoginpwd());
+                    c2.setMaxAge((60*60*24*10));
+                    response.addCookie(c2);
+                }else{
+                    Cookie c1=new Cookie("username","1");
+                    c1.setMaxAge((0));
+                    response.addCookie(c1);
+                    Cookie c2=new Cookie("password","1");
+                    c2.setMaxAge((0));
+                    response.addCookie(c2);
+                }
             }
         }
         return returnObject;
+    }
+
+    @RequestMapping("/logout")
+    public String logout(HttpServletResponse response,HttpSession session)
+    {
+        Cookie c1=new Cookie("username","1");
+        c1.setMaxAge((0));
+        response.addCookie(c1);
+        Cookie c2=new Cookie("password","1");
+        c2.setMaxAge((0));
+        response.addCookie(c2);
+
+        session.invalidate();
+        return "redirect:/";
     }
 
 }
