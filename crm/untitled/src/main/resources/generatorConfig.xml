@@ -60,15 +60,22 @@
             <property name="enableSubPackages" value="false"/>
         </sqlMapGenerator>
 
-        <!-- 客户端代码，生成易于使用的针对Model对象和XML配置文件 的代码
+        <!-- 客户端代码，生成易于使用的针对Model对象和XML配置文件的代码
                 type="ANNOTATEDMAPPER",生成Java Model 和基于注解的Mapper对象
                 type="MIXEDMAPPER",生成基于注解的Java Model 和相应的Mapper对象
                 type="XMLMAPPER",生成SQLMap XML文件和独立的Mapper接口
         -->
-        <javaClientGenerator targetPackage="crm.settings.mapper"
+        <javaClientGenerator targetPackage="crm.workbench.mapper"
                              targetProject="C:/Users/86183/Desktop/crm-project/crm/crm/src/main/java" type="XMLMAPPER">
             <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
+
+
+        <table tableName="tbl_activity" domainObjectName="Activity"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
 
 
 <!--        <table tableName="tbl_user" domainObjectName="User"-->
@@ -141,11 +148,7 @@
                 </table>
 
 
-                <table tableName="tbl_marketing_activities" domainObjectName="MarketingActivities"
-                       enableCountByExample="false" enableUpdateByExample="false"
-                       enableDeleteByExample="false" enableSelectByExample="false"
-                       selectByExampleQueryId="false">
-                </table>
+
 
 
                 <table tableName="tbl_marketing_activities_remark" domainObjectName="MarketingActivitiesRemark"
