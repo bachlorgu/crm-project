@@ -100,4 +100,34 @@ public class ActivityController {
         return retobj;
     }
 
+    @RequestMapping("/workbench/activity/queryActivityById")
+    @ResponseBody
+    public Object queryActivityById(String id){
+        Activity activity=(Activity)activityService.queryActivityById(id);
+        return activity;
+    }
+
+    @RequestMapping("/workbench/activity/saveActivity")
+    @ResponseBody
+    public Object saveActivity(Activity activity,HttpSession session){
+        User user=(User)session.getAttribute(Contant.SESSION_USER);
+        ReturnObject ret=new ReturnObject();
+        activity.setEditTime(DateUtil.timeFormat1(new Date()));
+        activity.setEditBy(user.getId());
+        int count=activityService.saveActivity(activity);
+        try{
+            if(count>0){
+                ret.setCode(Contant.RETURN_OBJECT_CODE_SUCCESS);
+            }else{
+                ret.setCode(Contant.RETURN_OBJECT_CODE_FAIL);
+                ret.setMessage("修改失败");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            ret.setCode(Contant.RETURN_OBJECT_CODE_FAIL);
+            ret.setMessage("修改失败(异常)");
+        }
+        return ret;
+    }
+
 }

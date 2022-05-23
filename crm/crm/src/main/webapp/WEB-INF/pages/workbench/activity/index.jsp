@@ -134,7 +134,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 			}
 		})
 
-		$("#deleteActivityBtn").click(function(){
+		$("#btn_delete_activity").click(function(){
 			var checkedids=$("#tbody input[type='checkbox']:checked")
 			if(checkedids.size()==0){
 				alert("请选择要删除的市场活动")
@@ -160,6 +160,70 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 					}
 				})
 			}
+		})
+
+		$("#btn_modify_activity").click(function(){
+			var checkedid=$("#tbody input[type=checkbox]:checked")
+			if(checkedid.size()==0){
+				alert("请选择要修改的市场活动")
+				return
+			}else if(checkedid.size()>1){
+				alert("每次只能修改一个市场活动")
+				return
+			}else{
+				var id=checkedid.val()
+				$.ajax({
+					url:'workbench/activity/queryActivityById',
+					data:{
+						id:id
+					},
+					type:'post',
+					dataType:'json',
+					success:function(data){
+					$("#modify_id").val(data.id)
+					$("#edit-marketActivityOwner").val(data.owner)
+					$("#edit-marketActivityName").val(data.name)
+					$("#edit-startTime").val(data.startDate)
+					$("#edit-endTime").val(data.endDate)
+					$("#edit-cost").val(data.cost)
+					$("#edit-describe").val(data.description)
+					$("#editActivityModal").modal("show")
+					}
+				})
+			}
+		})
+
+		$("#saveEditBtn").click(function(){
+			var id=$("#modify_id").val()
+			var name=$("#edit-marketActivityName").val()
+			var owner=$("#edit-marketActivityOwner").val()
+			var start=$("#edit-startTime").val()
+			var end=$("#edit-endTime").val()
+			var cost=$("#edit-cost").val()
+			var des=$("#edit-describe").val()
+			$.ajax({
+				url:'workbench/activity/saveActivity',
+				type:'post',
+				dataType:'json',
+				data:{
+					id:id,
+					name:name,
+					owner:owner,
+					startDate:start,
+					endDate:end,
+					cost:cost,
+					description:des
+				},
+				success:function(data){
+					if(data.code=='1'){
+						$("#editActivityModal").modal("hide")
+						queryActivityByConditionForPage($("#demo_pag1").bs_pagination('getOption', 'currentPage'),$("#demo_pag1").bs_pagination('getOption', 'rowsPerPage'))
+					}else{
+						alert(data.message)
+						$("#editActivityModal").modal("show")
+					}
+				}
+			})
 		})
 
 	})
@@ -303,7 +367,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				<div class="modal-body">
 				
 					<form class="form-horizontal" role="form">
-					
+					<input type="hidden" id="modify_id">
 						<div class="form-group">
 							<label for="edit-marketActivityOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
 							<div class="col-sm-10" style="width: 300px;">
@@ -322,11 +386,11 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 						<div class="form-group">
 							<label for="edit-startTime" class="col-sm-2 control-label">开始日期</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="edit-startTime" value="2020-10-10">
+								<input type="date" class="form-control" id="edit-startTime" value="2020-10-10">
 							</div>
 							<label for="edit-endTime" class="col-sm-2 control-label">结束日期</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control" id="edit-endTime" value="2020-10-20">
+								<input type="date" class="form-control" id="edit-endTime" value="2020-10-20">
 							</div>
 						</div>
 						
@@ -349,7 +413,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-primary" data-dismiss="modal">更新</button>
+					<button type="button" class="btn btn-primary" id="saveEditBtn">更新</button>
 				</div>
 			</div>
 		</div>
@@ -445,8 +509,8 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 			<div class="btn-toolbar" role="toolbar" style="background-color: #F7F7F7; height: 50px; position: relative;top: 5px;">
 				<div class="btn-group" style="position: relative; top: 18%;">
 				  <button type="button" class="btn btn-primary" id="btn_create_activity"><span class="glyphicon glyphicon-plus"></span> 创建</button>
-				  <button type="button" class="btn btn-default" data-toggle="modal" data-target="#editActivityModal"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
-				  <button type="button" class="btn btn-danger" id="deleteActivityBtn"><span class="glyphicon glyphicon-minus"></span> 删除</button>
+				  <button type="button" class="btn btn-default" id="btn_modify_activity"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
+				  <button type="button" class="btn btn-danger" id="btn_delete_activity"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 				</div>
 				<div class="btn-group" style="position: relative; top: 18%;">
                     <button type="button" class="btn btn-default" data-toggle="modal" data-target="#importActivityModal" ><span class="glyphicon glyphicon-import"></span> 上传列表数据（导入）</button>
