@@ -17,9 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Controller
 public class ActivityController {
@@ -58,10 +56,48 @@ public class ActivityController {
         }catch (Exception e){
             e.printStackTrace();
             ret.setCode(Contant.RETURN_OBJECT_CODE_FAIL);
-            ret.setMessage("添加失败");
+            ret.setMessage("添加失败(异常)");
         }
 
         return ret;
+    }
+
+    @RequestMapping("/workbench/activity/queryActivityByConditionForPage")
+    @ResponseBody
+    public Object queryActivityByConditionForPage(String name,String owner,String startDate,String endDate,int pageNo,int pageSize){
+        Map<String,Object> map=new HashMap<>();
+        map.put("name",name);
+        map.put("owner",owner);
+        map.put("startDate",startDate);
+        map.put("endDate",endDate);
+        map.put("beginNo",(pageNo-1)*pageSize);
+        map.put("pageSize",pageSize);
+        List<Activity> activityList=activityService.queryActivityByConditionForPage(map);
+        int totalRows=activityService.queryCountOfActivityByCondition(map);
+        Map<String,Object> retmap=new HashMap<>();
+        retmap.put("activityList",activityList);
+        retmap.put("totalRows",totalRows);
+        return retmap;
+    }
+
+    @RequestMapping("/workbench/activity/deleteActivityByIds")
+    @ResponseBody
+    public Object deleteActivityByIds(String[] Ids){
+        ReturnObject retobj=new ReturnObject();
+        try{
+            int ret = activityService.deleteActivityByIds(Ids);
+            if(ret>0){
+                retobj.setCode(Contant.RETURN_OBJECT_CODE_SUCCESS);
+            }else{
+                retobj.setCode(Contant.RETURN_OBJECT_CODE_FAIL);
+                retobj.setMessage("删除失败");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            retobj.setCode(Contant.RETURN_OBJECT_CODE_FAIL);
+            retobj.setMessage("删除失败(异常)");
+        }
+        return retobj;
     }
 
 }

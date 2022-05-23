@@ -24,7 +24,8 @@
     </bean>
     <!-- mapper注解扫描器配置,扫描@MapperScan注解,自动生成代码对象 -->
     <bean id="mapperScanner" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="crm.settings.mapper,crm.workbench.mapper"/>
+        <property name="basePackage" value="crm.settings.mapper,
+                                            crm.workbench.mapper"/>
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
     </bean>
 
@@ -45,7 +46,6 @@
             <tx:method name="update*" propagation="REQUIRED" rollback-for="Exception"/>
             <tx:method name="delete*" propagation="REQUIRED" rollback-for="Exception"/>
             <tx:method name="do*" propagation="REQUIRED" rollback-for="Exception"/>
-            <tx:method name="insert*" propagation="REQUIRED" rollback-for="Exception"/>
             <tx:method name="select*" propagation="REQUIRED" read-only="true"/>
         </tx:attributes>
     </tx:advice>
