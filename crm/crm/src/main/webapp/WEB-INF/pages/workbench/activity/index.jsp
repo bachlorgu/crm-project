@@ -222,10 +222,11 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 						alert(data.message)
 						$("#editActivityModal").modal("show")
 					}
+
+
 				}
 			})
 		})
-
 	})
 
 
