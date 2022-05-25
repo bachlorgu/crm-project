@@ -195,7 +195,6 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 
 		$("#saveEditBtn").click(function(){
 			var id=$("#modify_id").val()
-			var name=$("#edit-marketActivityName").val()
 			var owner=$("#edit-marketActivityOwner").val()
 			var start=$("#edit-startTime").val()
 			var end=$("#edit-endTime").val()
@@ -207,7 +206,6 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				dataType:'json',
 				data:{
 					id:id,
-					name:name,
 					owner:owner,
 					startDate:start,
 					endDate:end,
@@ -225,6 +223,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				}
 			})
 		})
+
 	})
 
 
