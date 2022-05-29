@@ -144,8 +144,8 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				var Ids=''
 				$.each(checkedids,function(){
 					Ids+='Ids='+this.value+'&'
-					Ids.substr(0,Ids.length-1)
 				})
+				Ids=Ids.substr(0,Ids.length-1)
 				$.ajax({
 					url:'workbench/activity/deleteActivityByIds',
 					data:Ids,
@@ -195,6 +195,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 
 		$("#saveEditBtn").click(function(){
 			var id=$("#modify_id").val()
+			var name=$("#edit-marketActivityName").val()
 			var owner=$("#edit-marketActivityOwner").val()
 			var start=$("#edit-startTime").val()
 			var end=$("#edit-endTime").val()
@@ -206,6 +207,7 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 				dataType:'json',
 				data:{
 					id:id,
+					name:name,
 					owner:owner,
 					startDate:start,
 					endDate:end,
@@ -219,6 +221,59 @@ String basePath=request.getScheme()+"://"+request.getServerName()+":"+request.ge
 					}else{
 						alert(data.message)
 						$("#editActivityModal").modal("show")
+					}
+				}
+			})
+		})
+
+		$("#exportActivityAllBtn").click(function(){
+			window.location.href='workbench/activity/exportAllActivity'
+		})
+
+		$("#exportActivityXzBtn").click(function(){
+			var checkedids=$("#tbody input[type=checkbox]:checked")
+			if(checkedids.size()==0){
+				alert("请选择要导出的市场活动")
+				return
+			}else{
+				var ids='?'
+				$.each(checkedids,function(){
+					ids+='ids='+this.value+'&'
+			})
+				ids=ids.substr(0,ids.length-1)
+				window.location.href='workbench/activity/exportCheckedActivityByIds'+ids
+			}
+		})
+
+		$("#importActivityBtn").click(function(){
+			var activityFileName=$("#activityFile").val()
+			if(activityFileName.substr(activityFileName.lastIndexOf('.')).toLowerCase()!='.xls'){
+				alert("只支持xls文件")
+				return
+			}
+			// var activityFile=document.getElementById("activityFile").files()
+			var activityFile=$("#activityFile")[0].files[0]
+			if(activityFile.size>5*1024*1024){
+				alert("文件大小不能超过5M")
+				return
+			}
+			var formData=new FormData()
+			formData.append('activityFile',activityFile)
+			$.ajax({
+				url:'workbench/activity/importActivity',
+				type:'post',
+				dataType:'json',
+				data:formData,
+				processData:false,//设置ajax向后台提交参数时是否把参数转换为字符串
+				contentType:false,//设置ajax向后台提交参数时是否按照统一urlencoded编码
+				success:function(data){
+					if(data.code=='1'){
+						alert("成功导入"+data.returnData+"条记录")
+						$("#importActivityModal").modal("hide")
+						queryActivityByConditionForPage(1,$("#demo_pag1").bs_pagination('getOption', 'rowsPerPage'))
+					}else{
+						alert(data.message)
+						$("#importActivityModal").modal("show")
 					}
 				}
 			})
